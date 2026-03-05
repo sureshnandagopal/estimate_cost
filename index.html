@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miso Kidswear Estimate</title>
+
+<style>
+body{
+font-family: Arial;
+padding:20px;
+background:#f5f5f5;
+}
+
+h2{
+text-align:center;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#2c7be5;
+color:white;
+border:none;
+font-size:16px;
+margin-top:5px;
+}
+
+table{
+width:100%;
+margin-top:15px;
+border-collapse:collapse;
+background:white;
+}
+
+th,td{
+padding:8px;
+border-bottom:1px solid #ddd;
+text-align:center;
+}
+
+.total{
+font-size:20px;
+font-weight:bold;
+margin-top:15px;
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Miso Kidswear Estimate</h2>
+
+<input id="product" placeholder="Product name">
+<input id="price" type="number" placeholder="Wholesale price">
+<input id="qty" type="number" placeholder="Quantity">
+
+<button onclick="addItem()">Add Item</button>
+
+<table id="list">
+<tr>
+<th>Product</th>
+<th>Price</th>
+<th>Qty</th>
+<th>Total</th>
+</tr>
+</table>
+
+<div class="total">
+Grand Total: ₹ <span id="grand">0</span>
+</div>
+
+<script>
+let grandTotal = 0;
+
+function addItem(){
+
+let product=document.getElementById("product").value;
+let price=parseFloat(document.getElementById("price").value);
+let qty=parseInt(document.getElementById("qty").value);
+
+if(!product || !price || !qty) return;
+
+let total=price*qty;
+
+grandTotal+=total;
+
+let table=document.getElementById("list");
+
+let row=table.insertRow();
+
+row.insertCell(0).innerText=product;
+row.insertCell(1).innerText=price;
+row.insertCell(2).innerText=qty;
+row.insertCell(3).innerText=total;
+
+document.getElementById("grand").innerText=grandTotal;
+
+document.getElementById("product").value="";
+document.getElementById("price").value="";
+document.getElementById("qty").value="";
+}
+</script>
+
+</body>
+</html>
