@@ -2,27 +2,17 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>MisoKidswear Estimate</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-}
-
+*{box-sizing:border-box;}
 body{
 margin:0;
 font-family:Arial;
 background:linear-gradient(120deg,#667eea,#764ba2);
 padding:20px;
 }
-
-.container{
-max-width:500px;
-margin:auto;
-}
-
+.container{max-width:500px;margin:auto;}
 .card{
 background:white;
 padding:20px;
@@ -30,20 +20,15 @@ border-radius:12px;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
 margin-bottom:20px;
 }
-
 .logo{
 display:block;
 margin:auto;
-width:200px;
+max-width:220px;
+width:100%;
+height:auto;
 margin-bottom:10px;
 }
-
-h2{
-text-align:center;
-margin-top:5px;
-color:#333;
-}
-
+h2{text-align:center;margin-top:5px;color:#333;}
 input{
 width:100%;
 padding:12px;
@@ -52,7 +37,6 @@ border-radius:8px;
 border:1px solid #ccc;
 font-size:16px;
 }
-
 button{
 width:100%;
 padding:12px;
@@ -65,29 +49,22 @@ font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
-
-button:hover{
-background:#ff5c00;
-}
-
+button:hover{background:#ff5c00;}
 table{
 width:100%;
 border-collapse:collapse;
 font-size:14px;
 }
-
 th{
 background:#764ba2;
 color:white;
 padding:10px;
 }
-
 td{
 padding:10px;
 text-align:center;
 border-bottom:1px solid #eee;
 }
-
 .delete{
 background:#ff4d4d;
 color:white;
@@ -96,13 +73,11 @@ padding:6px 10px;
 border-radius:6px;
 cursor:pointer;
 }
-
 .summary{
 text-align:center;
 font-size:18px;
 font-weight:bold;
 }
-
 </style>
 </head>
 
@@ -112,15 +87,13 @@ font-weight:bold;
 
 <div class="card">
 
+<img src="logo.png" class="logo">
 <h2>Estimate Tool</h2>
 
 <input id="product" placeholder="Product name">
-
-<input id="price" type="number" placeholder="Price">
-
-<input id="qty" type="number" placeholder="Quantity">
-
-<input id="discount" type="number" placeholder="Discount % (global)">
+<input id="price" type="number" inputmode="numeric" placeholder="Price">
+<input id="qty" type="number" inputmode="numeric" placeholder="Quantity">
+<input id="discount" type="number" inputmode="numeric" placeholder="Discount % (global)">
 
 <button onclick="addItem()">Add Product</button>
 
@@ -145,6 +118,10 @@ font-weight:bold;
 Total Pieces: <span id="pieces">0</span><br>
 Grand Total ₹ <span id="grand">0</span>
 
+</div>
+
+<div class="card">
+<button onclick="sendWhatsApp()">Send Summary to WhatsApp</button>
 </div>
 
 </div>
@@ -173,13 +150,11 @@ table.innerHTML=`
 
 let grand=0;
 let pieces=0;
-
 let discount=document.getElementById("discount").value || 0;
 
 items.forEach((item,index)=>{
 
 let price=item.price-(item.price*discount/100);
-
 let total=price*item.qty;
 
 grand+=total;
@@ -199,13 +174,9 @@ btn.innerText="X";
 btn.className="delete";
 
 btn.onclick=function(){
-
 items.splice(index,1);
-
 save();
-
 render();
-
 }
 
 del.appendChild(btn);
@@ -228,12 +199,40 @@ if(!product || !price || !qty) return;
 items.push({product,price,qty});
 
 save();
-
 render();
 
 document.getElementById("product").value="";
 document.getElementById("price").value="";
 document.getElementById("qty").value="";
+
+}
+
+function sendWhatsApp(){
+
+let discount=document.getElementById("discount").value || 0;
+
+let message="Miso Kidswear Purchase%0A%0A";
+
+let total=0;
+let pieces=0;
+
+items.forEach(item=>{
+
+let price=item.price-(item.price*discount/100);
+let rowTotal=price*item.qty;
+
+total+=rowTotal;
+pieces+=item.qty;
+
+message+=`${item.product} - ₹${price} x ${item.qty} = ₹${rowTotal}%0A`;
+
+});
+
+message+=`%0APieces: ${pieces}%0ATotal: ₹${Math.round(total)}`;
+
+let url=`https://wa.me/?text=${message}`;
+
+window.open(url,"_blank");
 
 }
 
