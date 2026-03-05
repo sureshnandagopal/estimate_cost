@@ -8,28 +8,34 @@
 
 body{
 font-family:Arial;
-background:linear-gradient(135deg,#6a11cb,#2575fc);
-padding:20px;
-color:#333;
+margin:0;
+background:linear-gradient(120deg,#667eea,#764ba2);
 }
 
 .container{
+max-width:500px;
+margin:auto;
+padding:15px;
+}
+
+.card{
 background:white;
 padding:15px;
 border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+margin-bottom:15px;
 }
 
 h2{
 text-align:center;
-color:#444;
+color:#333;
 }
 
 input{
 width:100%;
 padding:10px;
-margin:6px 0;
-border-radius:6px;
+margin:5px 0;
+border-radius:8px;
 border:1px solid #ccc;
 font-size:16px;
 }
@@ -37,50 +43,46 @@ font-size:16px;
 button{
 width:100%;
 padding:12px;
-background:#ff6b6b;
-color:white;
+margin-top:6px;
 border:none;
-border-radius:6px;
+border-radius:8px;
+background:#ff7a18;
+color:white;
 font-size:16px;
-margin-top:5px;
+font-weight:bold;
 }
 
 button:hover{
-background:#ff5252;
+background:#ff5722;
 }
 
 table{
 width:100%;
-margin-top:15px;
 border-collapse:collapse;
 font-size:14px;
 }
 
 th{
-background:#2575fc;
+background:#764ba2;
 color:white;
 padding:8px;
 }
 
 td{
 padding:8px;
-border-bottom:1px solid #ddd;
 text-align:center;
+border-bottom:1px solid #ddd;
 }
 
-.delete-btn{
-background:#ff3b3b;
-padding:5px 10px;
-border:none;
+.delete{
+background:#ff4d4d;
 color:white;
-border-radius:4px;
+border:none;
+padding:5px 8px;
+border-radius:5px;
 }
 
-.total-box{
-margin-top:15px;
-background:#f3f3f3;
-padding:10px;
-border-radius:8px;
+.summary{
 text-align:center;
 font-size:18px;
 font-weight:bold;
@@ -93,6 +95,8 @@ font-weight:bold;
 
 <div class="container">
 
+<div class="card">
+
 <h2>Miso Kidswear Estimate</h2>
 
 <input id="product" placeholder="Product name">
@@ -101,80 +105,119 @@ font-weight:bold;
 
 <input id="qty" type="number" placeholder="Quantity">
 
-<input id="discount" type="number" placeholder="Discount % (applies to all items)">
+<input id="discount" type="number" placeholder="Discount % (global)">
 
 <button onclick="addItem()">Add Product</button>
+
+</div>
+
+<div class="card">
 
 <table id="table">
 <tr>
 <th>Product</th>
 <th>Price</th>
 <th>Qty</th>
-<th>Discount</th>
 <th>Total</th>
-<th>Delete</th>
+<th></th>
 </tr>
 </table>
 
-<div class="total-box">
+</div>
+
+<div class="card summary">
+
+Total Pieces: <span id="pieces">0</span><br>
 Grand Total ₹ <span id="grand">0</span>
+
 </div>
 
 </div>
 
 <script>
 
-let grandTotal=0;
+let items = JSON.parse(localStorage.getItem("items")) || [];
+
+function save(){
+localStorage.setItem("items",JSON.stringify(items));
+}
+
+function render(){
+
+let table=document.getElementById("table");
+table.innerHTML=`
+<tr>
+<th>Product</th>
+<th>Price</th>
+<th>Qty</th>
+<th>Total</th>
+<th></th>
+</tr>
+`;
+
+let grand=0;
+let pieces=0;
+
+items.forEach((item,index)=>{
+
+let discount=document.getElementById("discount").value || 0;
+
+let price=item.price-(item.price*discount/100);
+
+let total=price*item.qty;
+
+grand+=total;
+pieces+=item.qty;
+
+let row=table.insertRow();
+
+row.insertCell(0).innerText=item.product;
+row.insertCell(1).innerText=item.price;
+row.insertCell(2).innerText=item.qty;
+row.insertCell(3).innerText=Math.round(total);
+
+let del=row.insertCell(4);
+
+let btn=document.createElement("button");
+btn.innerText="X";
+btn.className="delete";
+
+btn.onclick=function(){
+items.splice(index,1);
+save();
+render();
+}
+
+del.appendChild(btn);
+
+});
+
+document.getElementById("grand").innerText=Math.round(grand);
+document.getElementById("pieces").innerText=pieces;
+
+}
 
 function addItem(){
 
 let product=document.getElementById("product").value;
 let price=parseFloat(document.getElementById("price").value);
 let qty=parseInt(document.getElementById("qty").value);
-let discount=parseFloat(document.getElementById("discount").value)||0;
 
 if(!product||!price||!qty) return;
 
-let discountedPrice=price-(price*discount/100);
+items.push({product,price,qty});
 
-let total=discountedPrice*qty;
+save();
 
-grandTotal+=total;
-
-let table=document.getElementById("table");
-
-let row=table.insertRow();
-
-row.insertCell(0).innerText=product;
-row.insertCell(1).innerText=price;
-row.insertCell(2).innerText=qty;
-row.insertCell(3).innerText=discount+"%";
-row.insertCell(4).innerText=Math.round(total);
-
-let delCell=row.insertCell(5);
-
-let btn=document.createElement("button");
-btn.innerText="X";
-btn.className="delete-btn";
-
-btn.onclick=function(){
-
-grandTotal-=total;
-
-document.getElementById("grand").innerText=Math.round(grandTotal);
-
-row.remove();
-
-}
-
-delCell.appendChild(btn);
-
-document.getElementById("grand").innerText=Math.round(grandTotal);
+render();
 
 document.getElementById("product").value="";
 document.getElementById("price").value="";
 document.getElementById("qty").value="";
+
 }
+
+render();
 
 </script>
 
