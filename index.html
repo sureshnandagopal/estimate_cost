@@ -2,39 +2,52 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Miso Kidswear Estimate</title>
 
 <style>
 
+*{
+box-sizing:border-box;
+}
+
 body{
-font-family:Arial;
 margin:0;
+font-family:Arial;
 background:linear-gradient(120deg,#667eea,#764ba2);
+padding:20px;
 }
 
 .container{
 max-width:500px;
 margin:auto;
-padding:15px;
 }
 
 .card{
 background:white;
-padding:15px;
+padding:20px;
 border-radius:12px;
-box-shadow:0 4px 15px rgba(0,0,0,0.2);
-margin-bottom:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+margin-bottom:20px;
+}
+
+.logo{
+display:block;
+margin:auto;
+width:200px;
+margin-bottom:10px;
 }
 
 h2{
 text-align:center;
+margin-top:5px;
 color:#333;
 }
 
 input{
 width:100%;
-padding:10px;
-margin:5px 0;
+padding:12px;
+margin-top:10px;
 border-radius:8px;
 border:1px solid #ccc;
 font-size:16px;
@@ -43,17 +56,18 @@ font-size:16px;
 button{
 width:100%;
 padding:12px;
-margin-top:6px;
+margin-top:12px;
 border:none;
 border-radius:8px;
 background:#ff7a18;
 color:white;
 font-size:16px;
 font-weight:bold;
+cursor:pointer;
 }
 
 button:hover{
-background:#ff5722;
+background:#ff5c00;
 }
 
 table{
@@ -65,21 +79,22 @@ font-size:14px;
 th{
 background:#764ba2;
 color:white;
-padding:8px;
+padding:10px;
 }
 
 td{
-padding:8px;
+padding:10px;
 text-align:center;
-border-bottom:1px solid #ddd;
+border-bottom:1px solid #eee;
 }
 
 .delete{
 background:#ff4d4d;
 color:white;
 border:none;
-padding:5px 8px;
-border-radius:5px;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
 }
 
 .summary{
@@ -97,11 +112,13 @@ font-weight:bold;
 
 <div class="card">
 
-<h2>Miso Kidswear Estimate</h2>
+<img src="logo.png" class="logo">
+
+<h2>Estimate Tool</h2>
 
 <input id="product" placeholder="Product name">
 
-<input id="price" type="number" placeholder="price">
+<input id="price" type="number" placeholder="Price">
 
 <input id="qty" type="number" placeholder="Quantity">
 
@@ -145,6 +162,7 @@ localStorage.setItem("items",JSON.stringify(items));
 function render(){
 
 let table=document.getElementById("table");
+
 table.innerHTML=`
 <tr>
 <th>Product</th>
@@ -158,9 +176,9 @@ table.innerHTML=`
 let grand=0;
 let pieces=0;
 
-items.forEach((item,index)=>{
-
 let discount=document.getElementById("discount").value || 0;
+
+items.forEach((item,index)=>{
 
 let price=item.price-(item.price*discount/100);
 
@@ -183,9 +201,13 @@ btn.innerText="X";
 btn.className="delete";
 
 btn.onclick=function(){
+
 items.splice(index,1);
+
 save();
+
 render();
+
 }
 
 del.appendChild(btn);
@@ -203,7 +225,7 @@ let product=document.getElementById("product").value;
 let price=parseFloat(document.getElementById("price").value);
 let qty=parseInt(document.getElementById("qty").value);
 
-if(!product||!price||!qty) return;
+if(!product || !price || !qty) return;
 
 items.push({product,price,qty});
 
